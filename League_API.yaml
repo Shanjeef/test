@@ -1,0 +1,1004 @@
+openapi: 3.0.0
+info:
+  title: Demo API
+  version: '1.0'
+  description: |-
+    Welcome to the League API! Our documentation will walk you through authentication and request, response structures of various endpoints
+
+    Authentication
+    League's API uses OAuth 2.0 Bearer Token to authenticate requests. All API calls must include a bearer token, unlesss explicitly stated.
+
+    Note: An invalid, missing or expired token will result in HTTP 401 Unauthorized responses.
+
+    Example:
+
+    GET /accounts HTTP/1.1
+    Host: api.league.com
+    Authorization: Bearer v2.public.eyJyb2xlIjoib3JnIiwidX...
+    JSON:API
+
+    Our REST API endpoints adhere to the JSON:API specification as it specifies how a client should request resources to be fetched or modified, and how a server should respond to those requests. JSON:API is designed to minimize both the number of requests and the amount of data transmitted between clients and servers.JSON:API requires the use of the JSON:API media type (application/vnd.api+json) for exchanging data.
+
+    Request and Response Structure
+    All JSON:API requests and responses are JSON documents.
+
+    A document MUST contain one of the following top-level members:
+
+    data: the document's "primary data". Example: when creating an individual application resource, the primary data will contain the individual's personal information.
+
+    errors: an array of error objects Primary data MUST be either:
+
+    a single resource object for requests that target single resources, or
+
+    an array of resource objects for requests that target resource collections.
+
+    Single Resource Object Example:
+
+    {
+        "data": {
+            "type": "walletCard",
+            "id": "1",
+            "attributes": {
+                // ... this walletCard's attributes
+            },
+            "relationships": {
+                // ... this walletCard's relationships
+            }
+        }
+    }
+    Array of Resource Objects Example::
+
+    {
+        "data": [
+            {
+                "type": "walletCard",
+                "id": "1",
+                "attributes": {
+                    // ... this walletCard's attributes
+                },
+                "relationships": {
+                    // ... this walletCard's relationships
+                }
+            }, {
+                "type": "walletCard",
+                "id": "2",
+                "attributes": {
+                    // ... this walletCard's attributes
+                },
+                "relationships": {
+                    // ... this walletCard's relationships
+                }
+            }
+        ]
+    }
+
+    Rate Limits
+    Our rate limit is based on your IP address and is set to 1,000 requests per minute. If the limit is exceeded, responses will include an HTTP 429 status code along with a relevant message.
+  contact: {}
+servers:
+  - url: 'http://api.league.com'
+paths:
+  '/v1/test/wallets/{user_id}':
+    parameters:
+      - schema:
+          type: string
+        name: user_id
+        in: path
+        required: true
+        description: The user ID of the desired user.
+    get:
+      summary: Wallet
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - type: SpendingBenefitCard
+                        id: e2416eafbdf7381f54dc9dc035c83d01
+                        attributes:
+                          activation_date: 1622505600
+                          end_date: 1654041600
+                          first_name: Johnny
+                          last_name: Bravo
+                          product_type: hsa
+                          spending_account:
+                            Allocation:
+                              C: CAD
+                              F: 1000
+                              M: 100000
+                            AllocationSchedule: null
+                            Balance:
+                              C: CAD
+                              F: 500
+                              M: 50000
+                            DisbursementDescription: ''
+                            PolicyEndDate: ''
+                            PolicyStartDate: ''
+                            Spent:
+                              C: ''
+                              F: 0
+                              M: 0
+                            TopUp:
+                              C: ''
+                              F: 0
+                              M: 0
+                            TotalAllocation:
+                              C: ''
+                              F: 0
+                              M: 0
+                        relationships:
+                          user:
+                            data:
+                              type: User
+                              id: a19badc17bcd615fef06a262b1078fd5
+                            links:
+                              self: 'https://example.com/users/a19badc17bcd615fef06a262b1078fd5'
+                        links:
+                          self: 'https://example.com/wallets/a19badc17bcd615fef06a262b1078fd5'
+                          submit_claim:
+                            href: 'https://example.com/claims?claim_id=123'
+                            meta:
+                              availableFields:
+                                - claimId
+                              method: POST
+                              requiredFieldValues:
+                                claimId: '123'
+                    included:
+                      - type: User
+                        id: a19badc17bcd615fef06a262b1078fd5
+                        attributes:
+                          createDate: 1622505600
+                          email: shanjeef@testing.com
+                          emailVerified: true
+                          firstName: Shanjeef
+                          lastName: Satchi
+                properties:
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                          description: Identifies the resource type
+                        id:
+                          type: string
+                          minLength: 1
+                          description: The resource identifier
+                        attributes:
+                          $ref: '#/components/schemas/SpendingBenefitCard'
+                        relationships:
+                          type: object
+                          description: Related resources
+                          properties:
+                            user:
+                              type: object
+                              required:
+                                - data
+                                - links
+                              description: |
+                                User can be related resource
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                      description: Identifies the resource type
+                                    id:
+                                      type: string
+                                      minLength: 1
+                                      description: The resource identifier
+                                links:
+                                  type: object
+                                  required:
+                                    - self
+                                  properties:
+                                    self:
+                                      type: string
+                                      minLength: 1
+                                      description: Link to obtain details about the User resource
+                        links:
+                          type: object
+                          description: ''
+                          properties:
+                            self:
+                              type: string
+                              minLength: 1
+                            submit_claim:
+                              type: object
+                              required:
+                                - href
+                                - meta
+                              description: Details on submit claim action
+                              properties:
+                                href:
+                                  type: string
+                                  minLength: 1
+                                  description: Link to action
+                                meta:
+                                  type: object
+                                  required:
+                                    - availableFields
+                                    - method
+                                    - requiredFieldValues
+                                  description: 'Outlines metadata re: action''s http Method, required fields'
+                                  properties:
+                                    availableFields:
+                                      type: array
+                                      items:
+                                        type: object
+                                    method:
+                                      type: string
+                                      minLength: 1
+                                    requiredFieldValues:
+                                      type: object
+                                      required:
+                                        - claimId
+                                      properties:
+                                        claimId:
+                                          type: string
+                                          minLength: 1
+                          required:
+                            - self
+                            - submit_claim
+                      required:
+                        - type
+                        - id
+                  included:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                        id:
+                          type: string
+                          minLength: 1
+                        attributes:
+                          $ref: '#/components/schemas/User'
+                      required:
+                        - type
+                        - id
+                required:
+                  - data
+                  - included
+      operationId: get-wallets-user_id
+      description: |-
+        Returns all wallet details for the specified user.
+
+        Wallet cards are representation of benefits associated with the user. You may not create wallet cards resources directly -- they are automatically created when a user is associated with a benefit.
+      x-internal: false
+  '/v1/test/appointments/{user_id}':
+    parameters:
+      - schema:
+          type: string
+        name: user_id
+        in: path
+        required: true
+    get:
+      summary: Appointments
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                x-examples:
+                  example-1:
+                    data:
+                      - type: appointment
+                        id: ad7ab81eeaa49c50518d167f99551dea
+                        attributes:
+                          created_at: '2021-10-19T23:43:18.368778Z'
+                          ends_at: '2021-10-20T20:43:18.368777Z'
+                          published_at: ''
+                          starts_at: '2021-10-20T19:43:18.368775Z'
+                          status: completed
+                          type: virtualScheduled
+                          updated_at: '2021-10-19T23:43:18.368779Z'
+                        relationships:
+                          partner_consult:
+                            data:
+                              type: partnerConsult
+                              id: 5d378dc089ca96a4e62bcec42f2eb140
+                          partner_org:
+                            data:
+                              type: partnerOrg
+                              id: 967427d1919d80c21077af2427c96e69
+                          patient:
+                            data:
+                              type: patient
+                              id: 2a6bbd793fe3cd4362fa650c630e81f2
+                          practitioner:
+                            data:
+                              type: practitioner
+                              id: 1e4b3a5d6db444a70ba8b207df7e0dc5
+                          service:
+                            data:
+                              type: service
+                              id: ab08cbd02d5122d36df8fa9d55c95633
+                          specialty:
+                            data:
+                              type: specialty
+                              id: 21c4af379352f1d083868d45792f219e
+                          transaction:
+                            data:
+                              type: transaction
+                              id: 8d7b1fa99b7557b75c4b9bd49cdfb008
+                    included:
+                      - type: patient
+                        id: 2a6bbd793fe3cd4362fa650c630e81f2
+                        attributes:
+                          first_name: Monkey
+                          last_name: D Luffy
+                      - type: practitioner
+                        id: 1e4b3a5d6db444a70ba8b207df7e0dc5
+                        attributes:
+                          avatar_url: 'https://static.wikia.nocookie.net/onepiece/images/e/e6/Monkey_D._Garp_Portrait.png/revision/latest?cb=20200112090224'
+                          name: Monkey D Garp
+                      - type: service
+                        id: ab08cbd02d5122d36df8fa9d55c95633
+                        attributes:
+                          price:
+                            C: CAD
+                            M: 18000
+                          title: King of Pirates
+                      - type: specialty
+                        id: 21c4af379352f1d083868d45792f219e
+                      - type: transaction
+                        id: 8d7b1fa99b7557b75c4b9bd49cdfb008
+                      - type: partnerConsult
+                        id: 5d378dc089ca96a4e62bcec42f2eb140
+                      - type: partnerOrg
+                        id: 967427d1919d80c21077af2427c96e69
+                properties:
+                  data:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                        id:
+                          type: string
+                          minLength: 1
+                        attributes:
+                          type: object
+                          properties:
+                            created_at:
+                              type: string
+                              minLength: 1
+                            ends_at:
+                              type: string
+                              minLength: 1
+                            published_at:
+                              type: string
+                            starts_at:
+                              type: string
+                              minLength: 1
+                            status:
+                              type: string
+                              minLength: 1
+                            type:
+                              type: string
+                              minLength: 1
+                            updated_at:
+                              type: string
+                              minLength: 1
+                          required:
+                            - created_at
+                            - ends_at
+                            - published_at
+                            - starts_at
+                            - status
+                            - type
+                            - updated_at
+                        relationships:
+                          type: object
+                          properties:
+                            partner_consult:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            partner_org:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            patient:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            practitioner:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            service:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            specialty:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                            transaction:
+                              type: object
+                              required:
+                                - data
+                              properties:
+                                data:
+                                  type: object
+                                  required:
+                                    - type
+                                    - id
+                                  properties:
+                                    type:
+                                      type: string
+                                      minLength: 1
+                                    id:
+                                      type: string
+                                      minLength: 1
+                          required:
+                            - partner_consult
+                            - partner_org
+                            - patient
+                            - practitioner
+                            - service
+                            - specialty
+                            - transaction
+                      required:
+                        - type
+                        - id
+                  included:
+                    type: array
+                    uniqueItems: true
+                    minItems: 1
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          minLength: 1
+                        id:
+                          type: string
+                          minLength: 1
+                        attributes:
+                          type: object
+                          properties:
+                            first_name:
+                              type: string
+                              minLength: 1
+                            last_name:
+                              type: string
+                              minLength: 1
+                      required:
+                        - type
+                        - id
+                required:
+                  - data
+                  - included
+      operationId: get-v1-test-users-user_id-appointments
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                cursor:
+                  type: string
+            examples:
+              example-1:
+                value: {}
+        description: ''
+      description: Obtain details of appointments for a user
+components:
+  schemas:
+    User:
+      title: User
+      type: object
+      description: This model represents a user on the League Platform.
+      x-examples:
+        Alice Smith:
+          id: 142
+          firstName: Alice
+          lastName: Smith
+          email: alice.smith@gmail.com
+          dateOfBirth: '1997-10-31'
+          emailVerified: true
+          signUpDate: '2019-08-24'
+      properties:
+        user_id:
+          type: string
+          description: Unique identifier for the given user.
+        firstName:
+          type: string
+          example: Shanjeef
+        lastName:
+          type: string
+        email:
+          type: string
+          format: email
+        dateOfBirth:
+          type: string
+          format: date-time
+          example: '1997-10-15T17:32:28Z'
+        emailVerified:
+          type: boolean
+          description: Set to true if the user's email has been verified.
+        createDate:
+          type: string
+          format: date-time
+          description: The date that the user was created.
+      required:
+        - user_id
+        - firstName
+        - lastName
+        - email
+        - emailVerified
+    SpendingBenefitCard:
+      title: SpendingBenefitCard
+      type: object
+      x-examples:
+        example-1:
+          value:
+            id: string
+            product_type: string
+            activation_date: '2019-08-24T14:15:22Z'
+            end_date: string
+            inactive_date: string
+            first_name: string
+            last_name: string
+            '': string
+      description: ''
+      properties:
+        product_type:
+          type: string
+          description: This is a product type
+        activation_date:
+          type: string
+          format: date-time
+          description: This is the benefit's activation date
+        end_date:
+          type: string
+          format: date-time
+          description: This is the benefit's end date
+        inactive_date:
+          type: string
+          format: date-time
+          description: Outlines final date where funds cannot be utilized for retroactive claims
+        first_name:
+          type: string
+          example: Shanjeef
+          description: User's first name
+        last_name:
+          type: string
+          description: User's last name
+        spending_account:
+          $ref: '#/components/schemas/Wallet_SpendingAccount'
+        user:
+          $ref: '#/components/schemas/User'
+        id:
+          type: string
+      required:
+        - product_type
+        - activation_date
+        - end_date
+        - first_name
+        - last_name
+        - id
+    Money:
+      title: Money
+      type: object
+      properties:
+        currency:
+          type: string
+        value:
+          type: number
+    SpendingAccount:
+      title: SpendingAccount
+      type: object
+      properties:
+        allocated:
+          $ref: '#/components/schemas/Money'
+        balance:
+          $ref: '#/components/schemas/Money'
+        spent:
+          $ref: '#/components/schemas/Money'
+      required:
+        - allocated
+        - balance
+        - spent
+    Wallet_SpendingAccount:
+      description: ''
+      type: object
+      x-examples:
+        example-1:
+          allocation:
+            C: CAD
+            F: 375
+            M: 37500
+          allocation_schedule:
+            - allocate_on: '2021-06-01T05:00:00Z'
+              amount_to_allocate:
+                C: CAD
+                F: 375
+                M: 37500
+            - allocate_on: '2021-09-01T05:00:00Z'
+              amount_to_allocate:
+                C: CAD
+                F: 375
+                M: 37500
+            - allocate_on: '2021-12-01T05:00:00Z'
+              amount_to_allocate:
+                C: CAD
+                F: 375
+                M: 37500
+          balance:
+            C: CAD
+            F: 63.1
+            M: 6310
+          disbursement_description: $375.00 / Allocated Quarterly
+          policy_end_date: '2022-03-01T05:00:00Z'
+          policy_start_date: '2021-03-01T05:00:00Z'
+          spent:
+            C: CAD
+            F: 312.44
+            M: 31244
+          top_up:
+            C: CAD
+            F: 0
+            M: 0
+          total_allocation:
+            C: CAD
+            F: 1500
+            M: 150000
+      properties:
+        allocation:
+          type: object
+          required:
+            - C
+            - F
+            - M
+          properties:
+            C:
+              type: string
+              minLength: 1
+            F:
+              type: number
+            M:
+              type: number
+        allocation_schedule:
+          type: array
+          uniqueItems: true
+          minItems: 1
+          items:
+            type: object
+            properties:
+              allocate_on:
+                type: string
+                minLength: 1
+              amount_to_allocate:
+                type: object
+                properties:
+                  C:
+                    type: string
+                    minLength: 1
+                  F:
+                    type: number
+                  M:
+                    type: number
+                required:
+                  - C
+                  - F
+                  - M
+            required:
+              - allocate_on
+        balance:
+          type: object
+          required:
+            - C
+            - F
+            - M
+          properties:
+            C:
+              type: string
+              minLength: 1
+            F:
+              type: number
+            M:
+              type: number
+        disbursement_description:
+          type: string
+          minLength: 1
+        policy_end_date:
+          type: string
+          minLength: 1
+        policy_start_date:
+          type: string
+          minLength: 1
+        spent:
+          type: object
+          required:
+            - C
+            - F
+            - M
+          properties:
+            C:
+              type: string
+              minLength: 1
+            F:
+              type: number
+            M:
+              type: number
+        top_up:
+          type: object
+          required:
+            - C
+            - F
+            - M
+          properties:
+            C:
+              type: string
+              minLength: 1
+            F:
+              type: number
+            M:
+              type: number
+        total_allocation:
+          type: object
+          required:
+            - C
+            - F
+            - M
+          properties:
+            C:
+              type: string
+              minLength: 1
+            F:
+              type: number
+            M:
+              type: number
+      required:
+        - allocation
+        - allocation_schedule
+        - balance
+        - disbursement_description
+        - policy_end_date
+        - policy_start_date
+        - spent
+        - top_up
+        - total_allocation
+      title: ''
+    Patient:
+      title: Patient
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required:
+        - id
+        - first_name
+        - last_name
+    Service:
+      title: Service
+      type: object
+      properties:
+        id:
+          type: string
+        price:
+          type: object
+          required:
+            - M
+            - C
+          properties:
+            M:
+              type: integer
+            C:
+              type: string
+        title:
+          type: string
+      required:
+        - id
+        - price
+        - title
+    PartnerOrg:
+      title: ParnetOrg
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    Specialty:
+      title: Specialty
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    Transaction:
+      title: Transaction
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    PartnerConsult:
+      title: PartnerConsult
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    Practitioner:
+      title: Practitioner
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        avatar_url:
+          type: string
+      required:
+        - id
+        - name
+    Appointment:
+      title: Appointment
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        status:
+          type: string
+        starts_at:
+          type: string
+        ends_at:
+          type: string
+        published_at:
+          type: string
+        created_at:
+          type: string
+        updated_at:
+          type: string
+        patient:
+          $ref: '#/components/schemas/Patient'
+        service:
+          $ref: '#/components/schemas/Service'
+        partner_org:
+          $ref: '#/components/schemas/PartnerOrg'
+        specialty:
+          $ref: '#/components/schemas/Specialty'
+        transaction:
+          $ref: '#/components/schemas/Transaction'
+        partner_consult:
+          $ref: '#/components/schemas/PartnerConsult'
+        practitioner:
+          $ref: '#/components/schemas/Practitioner'
+      required:
+        - id
+        - type
+        - status
+        - starts_at
+        - ends_at
+        - published_at
+        - created_at
+        - updated_at
+  securitySchemes:
+    Bearer:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: 'https://api.league.com/auth/oauth/v2/token'
+          refreshUrl: ''
+          scopes: {}
