@@ -2,78 +2,7 @@ openapi: 3.0.0
 info:
   title: Demo API
   version: '1.0'
-  description: |-
-    Welcome to the League API! Our documentation will walk you through authentication and request, response structures of various endpoints
-
-    Authentication
-    League's API uses OAuth 2.0 Bearer Token to authenticate requests. All API calls must include a bearer token, unlesss explicitly stated.
-
-    Note: An invalid, missing or expired token will result in HTTP 401 Unauthorized responses.
-
-    Example:
-
-    GET /accounts HTTP/1.1
-    Host: api.league.com
-    Authorization: Bearer v2.public.eyJyb2xlIjoib3JnIiwidX...
-    JSON:API
-
-    Our REST API endpoints adhere to the JSON:API specification as it specifies how a client should request resources to be fetched or modified, and how a server should respond to those requests. JSON:API is designed to minimize both the number of requests and the amount of data transmitted between clients and servers.JSON:API requires the use of the JSON:API media type (application/vnd.api+json) for exchanging data.
-
-    Request and Response Structure
-    All JSON:API requests and responses are JSON documents.
-
-    A document MUST contain one of the following top-level members:
-
-    data: the document's "primary data". Example: when creating an individual application resource, the primary data will contain the individual's personal information.
-
-    errors: an array of error objects Primary data MUST be either:
-
-    a single resource object for requests that target single resources, or
-
-    an array of resource objects for requests that target resource collections.
-
-    Single Resource Object Example:
-
-    {
-        "data": {
-            "type": "walletCard",
-            "id": "1",
-            "attributes": {
-                // ... this walletCard's attributes
-            },
-            "relationships": {
-                // ... this walletCard's relationships
-            }
-        }
-    }
-    Array of Resource Objects Example::
-
-    {
-        "data": [
-            {
-                "type": "walletCard",
-                "id": "1",
-                "attributes": {
-                    // ... this walletCard's attributes
-                },
-                "relationships": {
-                    // ... this walletCard's relationships
-                }
-            }, {
-                "type": "walletCard",
-                "id": "2",
-                "attributes": {
-                    // ... this walletCard's attributes
-                },
-                "relationships": {
-                    // ... this walletCard's relationships
-                }
-            }
-        ]
-    }
-
-    Rate Limits
-    Our rate limit is based on your IP address and is set to 1,000 requests per minute. If the limit is exceeded, responses will include an HTTP 429 status code along with a relevant message.
+  description: Outlines the endpoints exposed by League for demo purposes
   contact: {}
 servers:
   - url: 'http://api.league.com'
@@ -383,29 +312,36 @@ paths:
                         type:
                           type: string
                           minLength: 1
+                          description: The resource type
                         id:
                           type: string
                           minLength: 1
+                          description: The resource identifier
                         attributes:
                           type: object
                           properties:
                             created_at:
                               type: string
                               minLength: 1
+                              description: Time appointment was c
                             ends_at:
                               type: string
                               minLength: 1
+                              description: Time appointment ends
                             published_at:
                               type: string
                             starts_at:
                               type: string
                               minLength: 1
+                              description: Start time of appointment
                             status:
                               type: string
                               minLength: 1
+                              description: Status of the appointment
                             type:
                               type: string
                               minLength: 1
+                              description: The type of appointment
                             updated_at:
                               type: string
                               minLength: 1
@@ -441,6 +377,7 @@ paths:
                               type: object
                               required:
                                 - data
+                              description: The partner organization resource associated with the appointment
                               properties:
                                 data:
                                   type: object
@@ -456,6 +393,7 @@ paths:
                                       minLength: 1
                             patient:
                               type: object
+                              description: Patient associated with the appointment
                               required:
                                 - data
                               properties:
@@ -473,6 +411,7 @@ paths:
                                       minLength: 1
                             practitioner:
                               type: object
+                              description: Practitioner details
                               required:
                                 - data
                               properties:
@@ -490,6 +429,7 @@ paths:
                                       minLength: 1
                             service:
                               type: object
+                              description: 'Service resource details '
                               required:
                                 - data
                               properties:
@@ -526,6 +466,7 @@ paths:
                               type: object
                               required:
                                 - data
+                              description: The financial transaction resource associated with the appointment
                               properties:
                                 data:
                                   type: object
